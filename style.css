@@ -1,0 +1,285 @@
+/* ── Reset & base ─────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg:        #1a1a2e;
+  --surface:   #16213e;
+  --accent:    #f5a623;
+  --accent2:   #e8891a;
+  --text:      #f0f0f0;
+  --muted:     #8888aa;
+  --danger:    #ff4757;
+  --ring-bg:   #2a2a4a;
+  --ring-fg:   #f5a623;
+  --radius:    16px;
+}
+
+html, body {
+  height: 100%;
+  overscroll-behavior: none;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100dvh;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+           env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+/* ── App shell ────────────────────────────────────── */
+#app {
+  width: 100%;
+  max-width: 420px;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px 32px;
+}
+
+/* ── Header ───────────────────────────────────────── */
+header {
+  padding: 24px 0 8px;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+}
+
+/* ── Main content ─────────────────────────────────── */
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding-top: 12px;
+}
+
+/* ── Round display ────────────────────────────────── */
+#round-display {
+  font-size: 1.15rem;
+  color: var(--muted);
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+}
+
+#round-number {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* ── Ring timer ───────────────────────────────────── */
+#timer-ring {
+  position: relative;
+  width: min(72vw, 280px);
+  height: min(72vw, 280px);
+}
+
+#timer-ring svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.ring-bg {
+  fill: none;
+  stroke: var(--ring-bg);
+  stroke-width: 10;
+}
+
+.ring-fg {
+  fill: none;
+  stroke: var(--ring-fg);
+  stroke-width: 10;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.5s linear, stroke 0.3s;
+}
+
+#timer-display {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(3rem, 14vw, 4.5rem);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+/* ── Drink alert ──────────────────────────────────── */
+#drink-alert {
+  font-size: clamp(2.5rem, 12vw, 3.8rem);
+  font-weight: 900;
+  color: var(--danger);
+  letter-spacing: 0.06em;
+  text-shadow: 0 0 24px rgba(255, 71, 87, 0.6);
+  animation: pulse 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  from { transform: scale(1);    opacity: 1; }
+  to   { transform: scale(1.06); opacity: 0.85; }
+}
+
+/* ── Progress bar ─────────────────────────────────── */
+#progress-bar-container {
+  width: 100%;
+}
+
+#progress-bar {
+  height: 6px;
+  background: var(--ring-bg);
+  border-radius: 99px;
+  overflow: hidden;
+  position: relative;
+}
+
+#progress-bar::after {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--progress, 0%);
+  background: linear-gradient(90deg, var(--accent2), var(--accent));
+  border-radius: 99px;
+  transition: width 0.4s ease;
+}
+
+#progress-label {
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* ── Controls ─────────────────────────────────────── */
+#controls {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.btn {
+  border: none;
+  border-radius: var(--radius);
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 14px 28px;
+  cursor: pointer;
+  transition: transform 0.1s, opacity 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #1a1a2e;
+  min-width: 140px;
+}
+
+.btn-primary:hover {
+  background: var(--accent2);
+}
+
+.btn-secondary {
+  background: var(--surface);
+  color: var(--text);
+  border: 2px solid var(--muted);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--muted);
+  border: 2px solid var(--ring-bg);
+}
+
+/* ── Sound notice ─────────────────────────────────── */
+#sound-notice {
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* ── Game over overlay ────────────────────────────── */
+#game-over {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 26, 46, 0.96);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 24px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+#game-over-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+#game-over-icon {
+  font-size: 5rem;
+  animation: bounce 0.8s ease infinite alternate;
+}
+
+@keyframes bounce {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-14px); }
+}
+
+#game-over h2 {
+  font-size: 2.4rem;
+  font-weight: 900;
+  color: var(--accent);
+}
+
+#game-over p {
+  font-size: 1.1rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ── Utility ──────────────────────────────────────── */
+.hidden {
+  display: none !important;
+}
+
+/* Flash animation for visual cue when sound is blocked */
+@keyframes flash-bg {
+  0%   { background: var(--bg); }
+  15%  { background: #3d0a0a; }
+  40%  { background: var(--bg); }
+  55%  { background: #3d0a0a; }
+  100% { background: var(--bg); }
+}
+
+body.flash-alert {
+  animation: flash-bg 0.7s ease forwards;
+}

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Beer Hour" />
+  <meta name="theme-color" content="#1a1a2e" />
+  <title>Beer Hour</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>🍺 Beer Hour</h1>
+    </header>
+
+    <main>
+      <div id="round-display">
+        <span id="round-label">Round</span>
+        <span id="round-number">1</span>
+        <span id="round-total">/ 60</span>
+      </div>
+
+      <div id="timer-ring">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <circle class="ring-bg" cx="100" cy="100" r="88" />
+          <circle id="ring-progress" class="ring-fg" cx="100" cy="100" r="88"
+            stroke-dasharray="553" stroke-dashoffset="0" />
+        </svg>
+        <div id="timer-display">1:00</div>
+      </div>
+
+      <div id="drink-alert" class="hidden">DRINK!</div>
+
+      <div id="progress-bar-container">
+        <div id="progress-bar"></div>
+        <div id="progress-label">0 / 60 rounds</div>
+      </div>
+
+      <div id="controls">
+        <button id="start-btn" class="btn btn-primary">Start</button>
+        <button id="pause-btn" class="btn btn-secondary hidden">Pause</button>
+        <button id="reset-btn" class="btn btn-ghost hidden">Reset</button>
+      </div>
+
+      <div id="sound-notice" class="hidden">
+        Tap <strong>Start</strong> to enable sound
+      </div>
+    </main>
+
+    <div id="game-over" class="hidden">
+      <div id="game-over-content">
+        <div id="game-over-icon">🍻</div>
+        <h2>Game Over!</h2>
+        <p>60 rounds complete.<br/>Hope everyone played fair!</p>
+        <button id="play-again-btn" class="btn btn-primary">Play Again</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
