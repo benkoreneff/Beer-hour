@@ -1,4 +1,4 @@
-/* ── Reset & base ─────────────────────────────────── */
+/* ── Reset & base ──────────────────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -8,6 +8,7 @@
 :root {
   --bg:        #1a1a2e;
   --surface:   #16213e;
+  --surface2:  #0f172a;
   --accent:    #f5a623;
   --accent2:   #e8891a;
   --text:      #f0f0f0;
@@ -16,6 +17,7 @@
   --ring-bg:   #2a2a4a;
   --ring-fg:   #f5a623;
   --radius:    16px;
+  --radius-sm: 10px;
 }
 
 html, body {
@@ -35,7 +37,271 @@ body {
            env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
-/* ── App shell ────────────────────────────────────── */
+/* ── Setup Screen ──────────────────────────────────────────────────────── */
+#setup-screen {
+  width: 100%;
+  max-width: 420px;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 20px 40px;
+  overflow-y: auto;
+}
+
+#setup-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding-top: 36px;
+}
+
+.setup-logo {
+  font-size: 4rem;
+  animation: bob 2s ease-in-out infinite alternate;
+}
+
+@keyframes bob {
+  from { transform: translateY(0) rotate(-4deg); }
+  to   { transform: translateY(-8px) rotate(4deg); }
+}
+
+.setup-title {
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+}
+
+.setup-subtitle {
+  font-size: 0.95rem;
+  color: var(--muted);
+  margin-top: -16px;
+}
+
+.setup-section {
+  width: 100%;
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.setup-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+/* ── Preset buttons ────────────────────────────────────────────────────── */
+.preset-grid {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.preset-btn {
+  flex: 1;
+  min-width: 48px;
+  padding: 10px 8px;
+  border: 2px solid var(--ring-bg);
+  border-radius: var(--radius-sm);
+  background: var(--surface2);
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.preset-btn:hover {
+  border-color: var(--muted);
+  color: var(--text);
+}
+
+.preset-btn.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(245, 166, 35, 0.1);
+}
+
+/* ── Rounds slider ─────────────────────────────────────────────────────── */
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.slider-min,
+.slider-max {
+  font-size: 0.72rem;
+  color: var(--muted);
+  white-space: nowrap;
+  min-width: 24px;
+}
+
+.slider-max { text-align: right; }
+
+input[type="range"] {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 99px;
+  background: var(--ring-bg);
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  transition: transform 0.1s;
+}
+
+input[type="range"]::-webkit-slider-thumb:active {
+  transform: scale(1.15);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+.slider-value-badge {
+  min-width: 36px;
+  padding: 4px 8px;
+  background: var(--accent);
+  color: #1a1a2e;
+  font-size: 0.85rem;
+  font-weight: 800;
+  border-radius: 8px;
+  text-align: center;
+}
+
+/* ── Toggle switches ───────────────────────────────────────────────────── */
+.toggle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--ring-bg);
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle-row:last-child {
+  border-bottom: none;
+}
+
+.toggle-label {
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.toggle-switch {
+  position: relative;
+  width: 50px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.toggle-knob {
+  position: absolute;
+  inset: 0;
+  background: var(--ring-bg);
+  border-radius: 99px;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+.toggle-knob::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  top: 4px;
+  left: 4px;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
+.toggle-switch input:checked + .toggle-knob {
+  background: var(--accent);
+}
+
+.toggle-switch input:checked + .toggle-knob::after {
+  transform: translateX(22px);
+}
+
+/* ── Asset hint ────────────────────────────────────────────────────────── */
+.asset-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(245, 166, 35, 0.07);
+  border: 1px solid rgba(245, 166, 35, 0.2);
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.asset-hint-icon { flex-shrink: 0; }
+
+.asset-hint code {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.75rem;
+  color: var(--accent);
+  background: rgba(245, 166, 35, 0.12);
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+
+/* ── Launch button ─────────────────────────────────────────────────────── */
+.btn-launch {
+  width: 100%;
+  padding: 18px;
+  font-size: 1.2rem;
+  letter-spacing: 0.03em;
+}
+
+/* ── App shell ─────────────────────────────────────────────────────────── */
 #app {
   width: 100%;
   max-width: 420px;
@@ -45,30 +311,62 @@ body {
   padding: 0 20px 32px;
 }
 
-/* ── Header ───────────────────────────────────────── */
+/* ── Header ────────────────────────────────────────────────────────────── */
 header {
-  padding: 24px 0 8px;
-  text-align: center;
+  padding: 16px 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 header h1 {
-  font-size: 1.6rem;
+  flex: 1;
+  text-align: center;
+  font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: 0.02em;
   color: var(--accent);
 }
 
-/* ── Main content ─────────────────────────────────── */
+.icon-btn {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  border: 2px solid var(--ring-bg);
+  border-radius: 10px;
+  font-size: 1.1rem;
+  color: var(--text);
+  cursor: pointer;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: border-color 0.15s, transform 0.1s;
+}
+
+.icon-btn:hover  { border-color: var(--muted); }
+.icon-btn:active { transform: scale(0.93); }
+
+.icon-btn-placeholder {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+}
+
+/* ── Main content ──────────────────────────────────────────────────────── */
 main {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  padding-top: 12px;
+  padding-top: 8px;
 }
 
-/* ── Round display ────────────────────────────────── */
+/* ── Round display ─────────────────────────────────────────────────────── */
 #round-display {
   font-size: 1.15rem;
   color: var(--muted);
@@ -83,7 +381,7 @@ main {
   color: var(--text);
 }
 
-/* ── Ring timer ───────────────────────────────────── */
+/* ── Ring timer ────────────────────────────────────────────────────────── */
 #timer-ring {
   position: relative;
   width: min(72vw, 280px);
@@ -123,22 +421,66 @@ main {
   color: var(--text);
 }
 
-/* ── Drink alert ──────────────────────────────────── */
+/* ── Drink alert (fullscreen overlay) ─────────────────────────────────── */
 #drink-alert {
-  font-size: clamp(2.5rem, 12vw, 3.8rem);
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  animation: alertFadeIn 0.25s ease both;
+}
+
+#drink-alert.hidden { display: none !important; }
+
+@keyframes alertFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* GIF fills the whole screen */
+#drink-gif {
+  display: none;       /* shown via JS once loaded */
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+/* Text sits on top of the GIF */
+.drink-overlay {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.drink-text {
+  font-size: clamp(3.5rem, 18vw, 6rem);
   font-weight: 900;
-  color: var(--danger);
+  color: #fff;
   letter-spacing: 0.06em;
-  text-shadow: 0 0 24px rgba(255, 71, 87, 0.6);
-  animation: pulse 0.5s ease-in-out infinite alternate;
+  text-shadow:
+    0 0 30px rgba(255, 71, 87, 0.9),
+    0 0 60px rgba(255, 71, 87, 0.5),
+    0 4px 12px rgba(0,0,0,0.8);
+  animation: pulse 0.45s ease-in-out infinite alternate;
 }
 
 @keyframes pulse {
   from { transform: scale(1);    opacity: 1; }
-  to   { transform: scale(1.06); opacity: 0.85; }
+  to   { transform: scale(1.08); opacity: 0.9; }
 }
 
-/* ── Progress bar ─────────────────────────────────── */
+/* ── Progress bar ──────────────────────────────────────────────────────── */
 #progress-bar-container {
   width: 100%;
 }
@@ -168,7 +510,7 @@ main {
   margin-top: 6px;
 }
 
-/* ── Controls ─────────────────────────────────────── */
+/* ── Controls ──────────────────────────────────────────────────────────── */
 #controls {
   display: flex;
   gap: 12px;
@@ -189,9 +531,7 @@ main {
   touch-action: manipulation;
 }
 
-.btn:active {
-  transform: scale(0.96);
-}
+.btn:active { transform: scale(0.96); }
 
 .btn-primary {
   background: var(--accent);
@@ -199,9 +539,7 @@ main {
   min-width: 140px;
 }
 
-.btn-primary:hover {
-  background: var(--accent2);
-}
+.btn-primary:hover  { background: var(--accent2); }
 
 .btn-secondary {
   background: var(--surface);
@@ -215,14 +553,14 @@ main {
   border: 2px solid var(--ring-bg);
 }
 
-/* ── Sound notice ─────────────────────────────────── */
+/* ── Sound notice ──────────────────────────────────────────────────────── */
 #sound-notice {
   font-size: 0.8rem;
   color: var(--muted);
   text-align: center;
 }
 
-/* ── Game over overlay ────────────────────────────── */
+/* ── Game over overlay ─────────────────────────────────────────────────── */
 #game-over {
   position: fixed;
   inset: 0;
@@ -266,12 +604,12 @@ main {
   line-height: 1.6;
 }
 
-/* ── Utility ──────────────────────────────────────── */
+/* ── Utility ───────────────────────────────────────────────────────────── */
 .hidden {
   display: none !important;
 }
 
-/* Flash animation for visual cue when sound is blocked */
+/* ── Flash animation (visual cue when sound is blocked) ────────────────── */
 @keyframes flash-bg {
   0%   { background: var(--bg); }
   15%  { background: #3d0a0a; }
@@ -282,4 +620,14 @@ main {
 
 body.flash-alert {
   animation: flash-bg 0.7s ease forwards;
+}
+
+/* ── Countdown urgency pulse ───────────────────────────────────────────── */
+@keyframes ring-urgent {
+  0%, 100% { filter: drop-shadow(0 0 0px var(--danger)); }
+  50%       { filter: drop-shadow(0 0 8px var(--danger)); }
+}
+
+#timer-ring.urgent svg {
+  animation: ring-urgent 0.5s ease-in-out infinite;
 }

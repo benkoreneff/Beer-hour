@@ -13,16 +13,82 @@
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
 </head>
 <body>
-  <div id="app">
+
+  <!-- ── Setup Screen ──────────────────────────────────────────────────── -->
+  <div id="setup-screen">
+    <div id="setup-content">
+      <div class="setup-logo">🍺</div>
+      <h1 class="setup-title">Beer Hour</h1>
+      <p class="setup-subtitle">Build your session</p>
+
+      <div class="setup-section">
+        <div class="setup-label">Number of Rounds</div>
+        <div class="preset-grid" id="round-presets">
+          <button class="preset-btn" data-value="10">10</button>
+          <button class="preset-btn" data-value="20">20</button>
+          <button class="preset-btn active" data-value="30">30</button>
+          <button class="preset-btn" data-value="60">60</button>
+        </div>
+        <div class="slider-row">
+          <span class="slider-min">5</span>
+          <input type="range" id="rounds-slider" min="5" max="120" step="5" value="30" />
+          <span class="slider-max">120</span>
+          <span class="slider-value-badge" id="rounds-value">30</span>
+        </div>
+      </div>
+
+      <div class="setup-section">
+        <div class="setup-label">Round Duration</div>
+        <div class="preset-grid" id="duration-presets">
+          <button class="preset-btn" data-value="30">30s</button>
+          <button class="preset-btn" data-value="45">45s</button>
+          <button class="preset-btn active" data-value="60">1 min</button>
+          <button class="preset-btn" data-value="120">2 min</button>
+          <button class="preset-btn" data-value="300">5 min</button>
+        </div>
+      </div>
+
+      <div class="setup-section">
+        <div class="setup-label">Options</div>
+        <div class="toggle-list">
+          <label class="toggle-row">
+            <span class="toggle-label">🔊 Sound Effects</span>
+            <div class="toggle-switch">
+              <input type="checkbox" id="sfx-toggle" checked />
+              <span class="toggle-knob"></span>
+            </div>
+          </label>
+          <label class="toggle-row">
+            <span class="toggle-label">⏱ Countdown Ticks</span>
+            <div class="toggle-switch">
+              <input type="checkbox" id="ticks-toggle" checked />
+              <span class="toggle-knob"></span>
+            </div>
+          </label>
+        </div>
+        <div class="asset-hint">
+          <span class="asset-hint-icon">💡</span>
+          <span>Drop <code>drink.gif</code> and <code>drink.mp3</code> into the <code>assets/</code> folder — both play together when it's time to drink</span>
+        </div>
+      </div>
+
+      <button id="launch-btn" class="btn btn-primary btn-launch">Let's Drink! 🍺</button>
+    </div>
+  </div>
+
+  <!-- ── Game Screen ───────────────────────────────────────────────────── -->
+  <div id="app" class="hidden">
     <header>
+      <button id="back-btn" class="icon-btn" aria-label="Back to setup" title="Back to setup">←</button>
       <h1>🍺 Beer Hour</h1>
+      <div class="icon-btn-placeholder"></div>
     </header>
 
     <main>
       <div id="round-display">
         <span id="round-label">Round</span>
         <span id="round-number">1</span>
-        <span id="round-total">/ 60</span>
+        <span id="round-total">/ 30</span>
       </div>
 
       <div id="timer-ring">
@@ -34,11 +100,16 @@
         <div id="timer-display">1:00</div>
       </div>
 
-      <div id="drink-alert" class="hidden">DRINK!</div>
+      <div id="drink-alert" class="hidden">
+        <img id="drink-gif" alt="" aria-hidden="true" />
+        <div class="drink-overlay">
+          <div class="drink-text">DRINK! 🍺</div>
+        </div>
+      </div>
 
       <div id="progress-bar-container">
         <div id="progress-bar"></div>
-        <div id="progress-label">0 / 60 rounds</div>
+        <div id="progress-label">0 / 30 rounds</div>
       </div>
 
       <div id="controls">
@@ -56,11 +127,15 @@
       <div id="game-over-content">
         <div id="game-over-icon">🍻</div>
         <h2>Game Over!</h2>
-        <p>60 rounds complete.<br/>Hope everyone played fair!</p>
+        <p id="game-over-msg">30 rounds complete.<br/>Hope everyone played fair!</p>
         <button id="play-again-btn" class="btn btn-primary">Play Again</button>
       </div>
     </div>
   </div>
+
+  <!-- Drink sounds — both play in parallel when DRINK alert fires -->
+  <audio id="drink-sound"   preload="none"></audio>
+  <audio id="drink-sound-2" preload="none"></audio>
 
   <script src="script.js"></script>
 </body>
