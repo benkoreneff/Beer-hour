@@ -25,9 +25,9 @@
         <div class="setup-label">Number of Rounds</div>
         <div class="preset-grid" id="round-presets">
           <button class="preset-btn" data-value="10">10</button>
-          <button class="preset-btn" data-value="20">20</button>
           <button class="preset-btn active" data-value="30">30</button>
           <button class="preset-btn" data-value="60">60</button>
+          <button class="preset-btn preset-btn-endless" data-value="endless" data-endless="true">∞</button>
         </div>
         <div class="slider-row">
           <span class="slider-min">5</span>
@@ -48,6 +48,34 @@
         </div>
       </div>
 
+      <!-- ── Spotify Power Hour ─────────────────────────────────────────── -->
+      <div class="setup-section">
+        <div class="setup-label">Spotify Power Hour</div>
+
+        <div id="sp-not-connected">
+          <p class="sp-hint">Connect your Spotify account to auto-change songs every round. Requires Spotify Premium.</p>
+          <button id="spotify-connect-btn" class="btn-sp-connect">Connect Spotify</button>
+          <p class="sp-device-hint">Make sure Spotify is open and playing on at least one device before starting.</p>
+        </div>
+
+        <div id="sp-connected" class="hidden">
+          <div class="sp-connected-badge">✓ Spotify Connected</div>
+          <select id="spotify-playlist-select" class="sp-select">
+            <option value="">Loading playlists…</option>
+          </select>
+          <label class="toggle-row">
+            <span class="toggle-label">Enable Spotify playback</span>
+            <div class="toggle-switch">
+              <input type="checkbox" id="spotify-toggle" />
+              <span class="toggle-knob"></span>
+            </div>
+          </label>
+          <button id="spotify-disconnect-btn" class="btn-sp-disconnect">Disconnect</button>
+        </div>
+
+        <div id="spotify-error" class="sp-error hidden"></div>
+      </div>
+
       <div class="setup-section">
         <div class="setup-label">Options</div>
         <div class="toggle-list">
@@ -66,10 +94,15 @@
             </div>
           </label>
         </div>
-        <div class="asset-hint">
-          <span class="asset-hint-icon">💡</span>
-          <span>Drop <code>drink.gif</code> and <code>drink.mp3</code> into the <code>assets/</code> folder — both play together when it's time to drink</span>
+      </div>
+
+      <div class="setup-section">
+        <div class="setup-label">Players</div>
+        <div class="player-input-row">
+          <input type="text" id="player-name-input" class="player-text-input" placeholder="Enter player name" maxlength="20" />
+          <button id="add-player-btn" class="btn-add-player">Add</button>
         </div>
+        <ul id="player-setup-list" class="player-setup-list"></ul>
       </div>
 
       <button id="launch-btn" class="btn btn-primary btn-launch">Let's Drink! 🍺</button>
@@ -115,11 +148,23 @@
       <div id="controls">
         <button id="start-btn" class="btn btn-primary">Start</button>
         <button id="pause-btn" class="btn btn-secondary hidden">Pause</button>
+        <button id="skip-btn"  class="btn btn-ghost hidden">Skip</button>
         <button id="reset-btn" class="btn btn-ghost hidden">Reset</button>
+      </div>
+
+      <div id="now-playing" class="hidden">
+        <div class="np-label">Now Playing</div>
+        <div id="now-playing-name"   class="np-name"></div>
+        <div id="now-playing-artist" class="np-artist"></div>
       </div>
 
       <div id="sound-notice" class="hidden">
         Tap <strong>Start</strong> to enable sound
+      </div>
+
+      <div id="player-board" class="hidden">
+        <div class="player-board-label">Tab</div>
+        <div id="player-cards"></div>
       </div>
     </main>
 
@@ -137,6 +182,7 @@
   <audio id="drink-sound"   preload="none"></audio>
   <audio id="drink-sound-2" preload="none"></audio>
 
+  <script src="spotify.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

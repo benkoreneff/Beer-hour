@@ -3,10 +3,15 @@
 // ── Config (populated from setup screen) ───────────────────────────────────
 const config = {
   rounds:   30,
+  endless:  false,
   duration: 60,  // seconds per round
   sfx:      true,
   ticks:    true,
 };
+
+// ── Players ────────────────────────────────────────────────────────────────
+let players = [];       // string[] — names from setup
+let playerState = [];   // { name, drinks }[] — live game state
 
 // ── State ──────────────────────────────────────────────────────────────────
 let currentRound  = 1;
@@ -27,6 +32,9 @@ const roundsValueBadge= document.getElementById('rounds-value');
 const sfxToggle       = document.getElementById('sfx-toggle');
 const ticksToggle     = document.getElementById('ticks-toggle');
 const launchBtn       = document.getElementById('launch-btn');
+const playerNameInput = document.getElementById('player-name-input');
+const addPlayerBtn    = document.getElementById('add-player-btn');
+const playerSetupList = document.getElementById('player-setup-list');
 
 // Game screen
 const roundNumber   = document.getElementById('round-number');
@@ -40,8 +48,11 @@ const progressLabel = document.getElementById('progress-label');
 const ringProgress  = document.getElementById('ring-progress');
 const startBtn      = document.getElementById('start-btn');
 const pauseBtn      = document.getElementById('pause-btn');
+const skipBtn       = document.getElementById('skip-btn');
 const resetBtn      = document.getElementById('reset-btn');
 const soundNotice   = document.getElementById('sound-notice');
+const playerBoard   = document.getElementById('player-board');
+const playerCards   = document.getElementById('player-cards');
 const gameOverPanel = document.getElementById('game-over');
 const gameOverMsg   = document.getElementById('game-over-msg');
 const playAgainBtn  = document.getElementById('play-again-btn');
@@ -58,15 +69,27 @@ const RING_CIRC = 2 * Math.PI * 88;
 const roundPresetBtns = document.querySelectorAll('#round-presets .preset-btn');
 roundPresetBtns.forEach(btn => {
   btn.addEventListener('click', () => {
-    const val = parseInt(btn.dataset.value, 10);
-    syncRoundPresets(val);
-    roundsSlider.value = Math.min(Math.max(val, 5), 120);
-    config.rounds = val;
+    if (btn.dataset.endless) {
+      config.endless = true;
+      config.rounds = Infinity;
+      roundPresetBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      roundsValueBadge.textContent = '∞';
+      roundsSlider.disabled = true;
+    } else {
+      const val = parseInt(btn.dataset.value, 10);
+      config.endless = false;
+      syncRoundPresets(val);
+      roundsSlider.value = Math.min(Math.max(val, 5), 120);
+      roundsSlider.disabled = false;
+      config.rounds = val;
+    }
   });
 });
 
 roundsSlider.addEventListener('input', () => {
   const val = parseInt(roundsSlider.value, 10);
+  config.endless = false;
   syncRoundPresets(val);
   config.rounds = val;
 });
@@ -74,7 +97,7 @@ roundsSlider.addEventListener('input', () => {
 function syncRoundPresets(val) {
   roundsValueBadge.textContent = val;
   roundPresetBtns.forEach(b => {
-    b.classList.toggle('active', parseInt(b.dataset.value, 10) === val);
+    b.classList.toggle('active', !b.dataset.endless && parseInt(b.dataset.value, 10) === val);
   });
 }
 
@@ -88,6 +111,43 @@ durationPresetBtns.forEach(btn => {
   });
 });
 
+// Players — setup
+function addPlayer(name) {
+  name = name.trim();
+  if (!name) return;
+  players.push(name);
+  playerNameInput.value = '';
+  renderPlayerSetupList();
+}
+
+function removePlayer(index) {
+  players.splice(index, 1);
+  renderPlayerSetupList();
+}
+
+function renderPlayerSetupList() {
+  playerSetupList.innerHTML = '';
+  players.forEach((name, i) => {
+    const li = document.createElement('li');
+    li.className = 'player-setup-item';
+    li.innerHTML = `
+      <span class="player-setup-name">${escapeHtml(name)}</span>
+      <button class="btn-remove-player" aria-label="Remove ${escapeHtml(name)}">✕</button>
+    `;
+    li.querySelector('.btn-remove-player').addEventListener('click', () => removePlayer(i));
+    playerSetupList.appendChild(li);
+  });
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+addPlayerBtn.addEventListener('click', () => addPlayer(playerNameInput.value));
+playerNameInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') addPlayer(playerNameInput.value);
+});
+
 // Launch button
 launchBtn.addEventListener('click', () => {
   config.sfx   = sfxToggle.checked;
@@ -96,11 +156,19 @@ launchBtn.addEventListener('click', () => {
 });
 
 function launchGame() {
+  if (typeof spotify !== 'undefined') spotify.reset();
   currentRound = 1;
   secondsLeft  = config.duration;
 
-  roundTotal.textContent = `/ ${config.rounds}`;
-  gameOverMsg.innerHTML  = `${config.rounds} rounds complete.<br/>Hope everyone played fair!`;
+  roundTotal.textContent = config.endless ? '' : `/ ${config.rounds}`;
+  gameOverMsg.innerHTML  = config.endless
+    ? `Session complete.<br/>Hope everyone played fair!`
+    : `${config.rounds} rounds complete.<br/>Hope everyone played fair!`;
+
+  // Init player state
+  playerState = players.map(name => ({ name, drinks: 0 }));
+  renderPlayerBoard();
+  playerBoard.classList.toggle('hidden', playerState.length === 0);
 
   updateRoundDisplay();
   updateTimerDisplay();
@@ -109,6 +177,36 @@ function launchGame() {
 
   setupScreen.classList.add('hidden');
   appDiv.classList.remove('hidden');
+}
+
+function renderPlayerBoard() {
+  playerCards.innerHTML = '';
+  playerState.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = 'player-card';
+    card.innerHTML = `
+      <span class="player-card-name">${escapeHtml(p.name)}</span>
+      <button class="btn-remove-drink" aria-label="Remove drink for ${escapeHtml(p.name)}">−</button>
+      <span class="player-card-count" id="drink-count-${i}">${p.drinks}</span>
+      <button class="btn-add-drink" aria-label="Add drink for ${escapeHtml(p.name)}">+</button>
+      <button class="btn-clear-debt" aria-label="Clear debt for ${escapeHtml(p.name)}">Clear</button>
+    `;
+    card.querySelector('.btn-add-drink').addEventListener('click', () => {
+      playerState[i].drinks++;
+      document.getElementById(`drink-count-${i}`).textContent = playerState[i].drinks;
+    });
+    card.querySelector('.btn-remove-drink').addEventListener('click', () => {
+      if (playerState[i].drinks > 0) {
+        playerState[i].drinks--;
+        document.getElementById(`drink-count-${i}`).textContent = playerState[i].drinks;
+      }
+    });
+    card.querySelector('.btn-clear-debt').addEventListener('click', () => {
+      playerState[i].drinks = 0;
+      document.getElementById(`drink-count-${i}`).textContent = 0;
+    });
+    playerCards.appendChild(card);
+  });
 }
 
 // Back button → return to setup
@@ -264,9 +362,14 @@ function updateTimerDisplay() {
 function updateRoundDisplay() {
   roundNumber.textContent = currentRound;
   const completed = currentRound - 1;
-  const pct = (completed / config.rounds) * 100;
-  progressBar.style.setProperty('--progress', `${pct}%`);
-  progressLabel.textContent = `${completed} / ${config.rounds} rounds`;
+  if (config.endless) {
+    progressBar.style.setProperty('--progress', '0%');
+    progressLabel.textContent = `${completed} rounds`;
+  } else {
+    const pct = (completed / config.rounds) * 100;
+    progressBar.style.setProperty('--progress', `${pct}%`);
+    progressLabel.textContent = `${completed} / ${config.rounds} rounds`;
+  }
 }
 
 function showDrinkAlert() {
@@ -320,7 +423,7 @@ function onRoundEnd() {
   playDrinkHorn();
   showDrinkAlert();
 
-  if (currentRound >= config.rounds) {
+  if (!config.endless && currentRound >= config.rounds) {
     endGame();
     return;
   }
@@ -329,6 +432,7 @@ function onRoundEnd() {
   secondsLeft = config.duration;
   updateRoundDisplay();
   updateTimerDisplay();
+  if (typeof spotify !== 'undefined') spotify.playNextTrack();
 }
 
 function startTimer() {
@@ -343,8 +447,10 @@ function startTimer() {
 
   startBtn.classList.add('hidden');
   pauseBtn.classList.remove('hidden');
+  skipBtn.classList.remove('hidden');
   resetBtn.classList.remove('hidden');
   soundNotice.classList.add('hidden');
+  if (typeof spotify !== 'undefined') spotify.playNextTrack();
 }
 
 function pauseTimer() {
@@ -355,6 +461,7 @@ function pauseTimer() {
   releaseWakeLock();
 
   pauseBtn.textContent = 'Resume';
+  if (typeof spotify !== 'undefined') spotify.pausePlayback();
 }
 
 function resumeTimer() {
@@ -367,6 +474,7 @@ function resumeTimer() {
   intervalId = setInterval(tick, 250);
 
   pauseBtn.textContent = 'Pause';
+  if (typeof spotify !== 'undefined') spotify.resumePlayback();
 }
 
 function fullReset() {
@@ -377,15 +485,19 @@ function fullReset() {
 
   currentRound = 1;
   secondsLeft  = config.duration;
+  playerState  = [];
 
   drinkAlert.classList.add('hidden');
   timerRing.classList.remove('urgent');
+  playerBoard.classList.add('hidden');
 
   startBtn.classList.remove('hidden');
   pauseBtn.classList.add('hidden');
+  skipBtn.classList.add('hidden');
   resetBtn.classList.add('hidden');
 
   pauseBtn.textContent = 'Pause';
+  if (typeof spotify !== 'undefined') { spotify.stopPlayback(); spotify.reset(); }
 }
 
 function resetTimer() {
@@ -403,12 +515,16 @@ function endGame() {
   playGameOverFanfare();
 
   progressBar.style.setProperty('--progress', '100%');
-  progressLabel.textContent = `${config.rounds} / ${config.rounds} rounds`;
+  progressLabel.textContent = config.endless
+    ? `${currentRound} rounds`
+    : `${config.rounds} / ${config.rounds} rounds`;
 
   startBtn.classList.add('hidden');
   pauseBtn.classList.add('hidden');
+  skipBtn.classList.add('hidden');
   resetBtn.classList.add('hidden');
 
+  if (typeof spotify !== 'undefined') spotify.stopPlayback();
   setTimeout(() => gameOverPanel.classList.remove('hidden'), 6200);
 }
 
@@ -417,6 +533,13 @@ startBtn.addEventListener('click', startTimer);
 pauseBtn.addEventListener('click', () => {
   if (running) pauseTimer();
   else resumeTimer();
+});
+skipBtn.addEventListener('click', () => {
+  if (!running) return;
+  secondsLeft = 0;
+  updateTimerDisplay();
+  onRoundEnd();
+  tickStart = performance.now(); // reset drift so next tick starts clean
 });
 resetBtn.addEventListener('click', resetTimer);
 
