@@ -119,6 +119,7 @@ async function spFetch(path, opts = {}) {
     },
   });
   if (res.status === 204) return null;
+  if (res.status === 403) throw new Error('This playlist type is not supported (e.g. radio stations). Please choose a regular playlist.');
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err?.error?.message || 'Spotify error ' + res.status);
