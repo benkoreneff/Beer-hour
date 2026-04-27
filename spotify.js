@@ -121,7 +121,8 @@ async function spFetch(path, opts = {}) {
   if (res.status === 204) return null;
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err?.error?.message || 'Spotify error ' + res.status);
+    const msg = err?.error?.message || res.statusText || 'unknown';
+    throw new Error(`Spotify ${res.status}: ${msg} [${url.replace('https://api.spotify.com/v1', '')}]`);
   }
   return res.json();
 }
