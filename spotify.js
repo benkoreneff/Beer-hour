@@ -119,7 +119,6 @@ async function spFetch(path, opts = {}) {
     },
   });
   if (res.status === 204) return null;
-  if (res.status === 403) throw new Error('This playlist type is not supported (e.g. radio stations). Please choose a regular playlist.');
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err?.error?.message || 'Spotify error ' + res.status);
@@ -140,11 +139,13 @@ async function spFetchPlaylists() {
 
 async function spFetchTracks(playlistId) {
   const tracks = [];
-  let next = `/playlists/${playlistId}/tracks?limit=100&fields=next,items(track(uri,name,artists,duration_ms,restrictions))`;
+  let next = `/playlists/${playlistId}/tracks?limit=100&additional_types=track`;
   while (next) {
     const d = await spFetch(next);
-    for (const { track: t } of (d.items || [])) {
+    for (const item of (d.items || [])) {
+      const t = item?.track;
       if (!t || !t.uri || t.uri.startsWith('spotify:local:')) continue;
+      if (t.type && t.type !== 'track') continue;
       if (t.restrictions?.reason) continue;
       if (!(t.duration_ms > 0)) continue;
       tracks.push({ uri: t.uri, name: t.name, artist: t.artists?.[0]?.name || '', duration_ms: t.duration_ms });
