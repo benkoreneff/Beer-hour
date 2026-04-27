@@ -64,7 +64,11 @@ async function spGetAccessToken() {
 
 // ── OAuth PKCE flow ────────────────────────────────────────────────────────
 function spRedirectUri() {
-  return window.location.origin + window.location.pathname.replace(/\/$/, '');
+  const host = window.location.hostname;
+  if (host === 'localhost' || host === '127.0.0.1') {
+    return window.location.origin + window.location.pathname.replace(/\/$/, '');
+  }
+  return 'https://powerhour.fi';
 }
 
 async function spInitiateAuth() {
