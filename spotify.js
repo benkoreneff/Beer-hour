@@ -286,6 +286,8 @@ async function spInitUI() {
 
     this.disabled = true;
     this.style.opacity = '0.5';
+    const toggle = document.getElementById('spotify-toggle');
+    toggle.disabled = true;
     try {
       spotify.tracks = await spFetchTracks(id);
       if (!spotify.tracks.length) spShowError('No playable tracks found in this playlist.');
@@ -294,6 +296,7 @@ async function spInitUI() {
     }
     this.disabled = false;
     this.style.opacity = '';
+    toggle.disabled = false;
   });
 
   document.getElementById('spotify-toggle').addEventListener('change', function () {
@@ -331,7 +334,15 @@ async function spUpdateUI() {
     const savedId = localStorage.getItem(LS_PLAYLIST);
     if (savedId && playlists.some(p => p.id === savedId)) {
       select.value = savedId;
-      try { spotify.tracks = await spFetchTracks(savedId); } catch (_) {}
+      const toggle = document.getElementById('spotify-toggle');
+      toggle.disabled = true;
+      try {
+        spotify.tracks = await spFetchTracks(savedId);
+        if (!spotify.tracks.length) spShowError('No playable tracks found in this playlist.');
+      } catch (e) {
+        spShowError('Failed to load tracks: ' + e.message);
+      }
+      toggle.disabled = false;
     }
   } catch (e) {
     spShowError('Failed to load playlists: ' + e.message);
