@@ -162,7 +162,6 @@ launchBtn.addEventListener('click', () => {
 });
 
 function launchGame() {
-  if (typeof spotify !== 'undefined') spotify.reset();
   currentRound = 1;
   secondsLeft  = config.duration;
 
@@ -441,7 +440,6 @@ function onRoundEnd() {
   secondsLeft = config.duration;
   updateRoundDisplay();
   updateTimerDisplay();
-  if (typeof spotify !== 'undefined') spotify.playNextTrack();
 }
 
 function startTimer() {
@@ -459,7 +457,6 @@ function startTimer() {
   skipBtn.classList.remove('hidden');
   resetBtn.classList.remove('hidden');
   soundNotice.classList.add('hidden');
-  if (typeof spotify !== 'undefined') spotify.playNextTrack();
 }
 
 function pauseTimer() {
@@ -470,7 +467,6 @@ function pauseTimer() {
   releaseWakeLock();
 
   pauseBtn.textContent = 'Resume';
-  if (typeof spotify !== 'undefined') spotify.pausePlayback();
 }
 
 function resumeTimer() {
@@ -483,7 +479,6 @@ function resumeTimer() {
   intervalId = setInterval(tick, 250);
 
   pauseBtn.textContent = 'Pause';
-  if (typeof spotify !== 'undefined') spotify.resumePlayback();
 }
 
 function fullReset() {
@@ -507,7 +502,6 @@ function fullReset() {
   resetBtn.classList.add('hidden');
 
   pauseBtn.textContent = 'Pause';
-  if (typeof spotify !== 'undefined') { spotify.stopPlayback(); spotify.reset(); }
 }
 
 function resetTimer() {
@@ -534,7 +528,6 @@ function endGame() {
   skipBtn.classList.add('hidden');
   resetBtn.classList.add('hidden');
 
-  if (typeof spotify !== 'undefined') spotify.stopPlayback();
   setTimeout(() => gameOverPanel.classList.remove('hidden'), 6200);
 }
 

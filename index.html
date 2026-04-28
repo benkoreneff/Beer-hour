@@ -48,34 +48,6 @@
         </div>
       </div>
 
-      <!-- ── Spotify Power Hour ─────────────────────────────────────────── -->
-      <div class="setup-section">
-        <div class="setup-label">Spotify Power Hour</div>
-
-        <div id="sp-not-connected">
-          <p class="sp-hint">Connect your Spotify account to auto-change songs every round. Requires Spotify Premium.</p>
-          <button id="spotify-connect-btn" class="btn-sp-connect">Connect Spotify</button>
-          <p class="sp-device-hint">Make sure Spotify is open and playing on at least one device before starting.</p>
-        </div>
-
-        <div id="sp-connected" class="hidden">
-          <div class="sp-connected-badge">✓ Spotify Connected</div>
-          <select id="spotify-playlist-select" class="sp-select">
-            <option value="">Loading playlists…</option>
-          </select>
-          <label class="toggle-row">
-            <span class="toggle-label">Enable Spotify playback</span>
-            <div class="toggle-switch">
-              <input type="checkbox" id="spotify-toggle" />
-              <span class="toggle-knob"></span>
-            </div>
-          </label>
-          <button id="spotify-disconnect-btn" class="btn-sp-disconnect">Disconnect</button>
-        </div>
-
-        <div id="spotify-error" class="sp-error hidden"></div>
-      </div>
-
       <div class="setup-section">
         <div class="setup-label">Options</div>
         <div class="toggle-list">
@@ -166,12 +138,6 @@
         </div>
       </div>
 
-      <div id="now-playing" class="hidden">
-        <div class="np-label">Now Playing</div>
-        <div id="now-playing-name"   class="np-name"></div>
-        <div id="now-playing-artist" class="np-artist"></div>
-      </div>
-
       <div id="sound-notice" class="hidden">
         Tap <strong>Start</strong> to enable sound
       </div>
@@ -196,7 +162,6 @@
   <audio id="drink-sound"   preload="none"></audio>
   <audio id="drink-sound-2" preload="none"></audio>
 
-  <script src="spotify.js"></script>
   <script src="drinkViz.js"></script>
   <script src="script.js"></script>
 </body>
