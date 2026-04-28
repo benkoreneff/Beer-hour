@@ -22,6 +22,13 @@ let tickStart     = null;
 let audioCtx      = null;
 let audioUnlocked = false;
 let wakeLock      = null;
+let totalShots    = 0;       // total completed rounds this session — for animation timing
+
+// Round-end animation timing
+const ALERT_MS         = 3000;   // GIF/flash visible window
+const POUR_MS          = 3800;   // pour animation length (must match drinkViz CSS)
+const BEER_COMPLETE_MS = 4200;   // chug + fly-to-shelf when 8th shot lands (after pour)
+const SHOTS_PER_BEER   = 8;
 
 // Shared state accessors for sub-modules (drinkViz.js)
 window.BeerHour = {
@@ -391,7 +398,7 @@ function showDrinkAlert() {
   void document.body.offsetWidth;
   document.body.classList.add('flash-alert');
 
-  setTimeout(() => drinkAlert.classList.add('hidden'), 6000);
+  setTimeout(() => drinkAlert.classList.add('hidden'), ALERT_MS);
 }
 
 // ── Timer core ─────────────────────────────────────────────────────────────
@@ -429,10 +436,18 @@ function tick() {
 function onRoundEnd() {
   playDrinkHorn();
   showDrinkAlert();
-  if (typeof drinkViz !== 'undefined') drinkViz.onShot();
+
+  totalShots++;
+  const willCompleteBeer = totalShots % SHOTS_PER_BEER === 0;
+
+  // Defer the pour animation until AFTER the GIF/alert hides — otherwise
+  // it plays underneath the fullscreen overlay and the user never sees it.
+  setTimeout(() => {
+    if (typeof drinkViz !== 'undefined') drinkViz.onShot();
+  }, ALERT_MS);
 
   if (!config.endless && currentRound >= config.rounds) {
-    endGame();
+    endGame(willCompleteBeer);
     return;
   }
 
@@ -489,6 +504,7 @@ function fullReset() {
 
   currentRound = 1;
   secondsLeft  = config.duration;
+  totalShots   = 0;
   playerState  = [];
 
   drinkAlert.classList.add('hidden');
@@ -511,7 +527,7 @@ function resetTimer() {
   if (!audioUnlocked) soundNotice.classList.remove('hidden');
 }
 
-function endGame() {
+function endGame(willCompleteBeer = false) {
   running = false;
   clearInterval(intervalId);
   intervalId = null;
@@ -528,7 +544,10 @@ function endGame() {
   skipBtn.classList.add('hidden');
   resetBtn.classList.add('hidden');
 
-  setTimeout(() => gameOverPanel.classList.remove('hidden'), 6200);
+  // Wait long enough for the pour (and chug+throw, if applicable) to play
+  // before slapping the game-over panel over the screen.
+  const wait = ALERT_MS + POUR_MS + (willCompleteBeer ? BEER_COMPLETE_MS : 600);
+  setTimeout(() => gameOverPanel.classList.remove('hidden'), wait);
 }
 
 // ── Button wiring ──────────────────────────────────────────────────────────

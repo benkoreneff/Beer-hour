@@ -775,7 +775,7 @@ main {
   width: 100%;
   background: var(--surface);
   border-radius: var(--radius);
-  padding: 16px 16px 20px;
+  padding: 18px 16px 22px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -791,20 +791,20 @@ main {
   align-self: flex-start;
 }
 
-/* stage: clips the bottle arm when it's off-screen */
+/* Mug stage — bigger and more prominent now that pouring happens above it */
 #dv-stage {
   position: relative;
   width: 160px;
-  height: 150px;
-  overflow: hidden;
+  height: 160px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
 }
 
 #dv-mug-wrap {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 110px;
+  width: 140px;
+  transform-origin: 50% 100%;
+  filter: drop-shadow(0 8px 14px rgba(0,0,0,0.35));
 }
 
 #dv-mug-wrap svg {
@@ -813,50 +813,27 @@ main {
   display: block;
 }
 
-@keyframes dv-chug {
-  0%   { transform: translateX(-50%) rotate(0deg)   scale(1); }
-  15%  { transform: translateX(-50%) rotate(-9deg)  scale(1.07); }
-  30%  { transform: translateX(-50%) rotate(7deg)   scale(0.96); }
-  48%  { transform: translateX(-50%) rotate(-5deg)  scale(1.03); }
-  65%  { transform: translateX(-50%) rotate(3deg); }
-  82%  { transform: translateX(-50%) rotate(-1deg); }
-  100% { transform: translateX(-50%) rotate(0deg)   scale(1); }
+/* Slosh — quick wobble while liquid hits */
+@keyframes dv-mug-slosh {
+  0%   { transform: rotate(0deg)  scale(1); }
+  20%  { transform: rotate(-3deg) scale(1.04, 0.98); }
+  45%  { transform: rotate(2deg)  scale(0.98, 1.03); }
+  70%  { transform: rotate(-1deg) scale(1.01, 0.99); }
+  100% { transform: rotate(0deg)  scale(1); }
 }
+#dv-mug-wrap.dv-mug-slosh { animation: dv-mug-slosh 0.55s ease-out; }
 
+/* Chug — tilts way back as if held to a mouth, then settles */
+@keyframes dv-mug-chug {
+  0%   { transform: rotate(0deg)   translateY(0)   scale(1); }
+  18%  { transform: rotate(-12deg) translateY(-6px) scale(1.04); }
+  35%  { transform: rotate(-58deg) translateY(-22px) scale(1.02); }
+  60%  { transform: rotate(-62deg) translateY(-26px) scale(1.02); }
+  78%  { transform: rotate(-30deg) translateY(-10px) scale(1.0); }
+  100% { transform: rotate(0deg)   translateY(0)   scale(1); }
+}
 #dv-mug-wrap.dv-mug-chug {
-  animation: dv-chug 0.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
-}
-
-/* pour arm: slides in from the right, already tilted */
-#dv-pour-arm {
-  position: absolute;
-  top: 4px;
-  right: 0;
-  width: 52px;
-  transform-origin: center bottom;
-  transform: translateX(72px) rotate(-45deg);
-}
-
-#dv-pour-arm svg,
-#dv-bottle-wrap svg {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-@keyframes dv-pour-anim {
-  0%   { transform: translateX(72px)  rotate(-45deg); }
-  18%  { transform: translateX(0px)   rotate(-45deg); }
-  28%  { transform: translateX(0px)   rotate(-53deg); }
-  35%  { transform: translateX(0px)   rotate(-43deg); }
-  42%  { transform: translateX(0px)   rotate(-50deg); }
-  72%  { transform: translateX(0px)   rotate(-50deg); }
-  86%  { transform: translateX(0px)   rotate(-45deg); }
-  100% { transform: translateX(72px)  rotate(-45deg); }
-}
-
-#dv-pour-arm.pouring {
-  animation: dv-pour-anim 1.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+  animation: dv-mug-chug 2.1s cubic-bezier(0.45, 0.05, 0.3, 1) forwards;
 }
 
 /* shot pips */
@@ -880,46 +857,418 @@ main {
   background: var(--accent);
   border-color: var(--accent);
   transform: scale(1.25);
+  box-shadow: 0 0 8px rgba(245, 166, 35, 0.6);
 }
 
-/* completed beers row */
-#dv-completed-row {
+/* ── Beer Collection (the empties shelf) ───────────────────────────────── */
+#beer-collection {
+  width: 100%;
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 18px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.bc-title {
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+.bc-count {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #1a1a2e;
+  background: var(--accent);
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+  min-width: 28px;
+  text-align: center;
+}
+
+#bc-shelf {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
-  min-height: 38px;
-  align-items: center;
-  width: 100%;
+  gap: 6px;
+  align-content: flex-start;
+  min-height: 56px;
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 12px;
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  -webkit-overflow-scrolling: touch;
 }
 
-.dv-none-yet {
-  font-size: 0.75rem;
+.bc-empty-placeholder {
+  font-size: 0.78rem;
   color: var(--muted);
   font-style: italic;
+  width: 100%;
+  text-align: center;
+  align-self: center;
+  padding: 14px 0;
 }
 
-.dv-beer-icon {
-  display: inline-flex;
-  width: 30px;
-  height: auto;
+.bc-slot {
+  width: 38px;
+  height: 46px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
   flex-shrink: 0;
 }
 
-.dv-beer-icon svg {
+.bc-slot svg {
   width: 100%;
   height: auto;
+  display: block;
 }
 
-@keyframes dv-beer-pop {
-  0%   { transform: scale(0) rotate(-20deg); opacity: 0; }
-  60%  { transform: scale(1.35) rotate(6deg); opacity: 1; }
-  80%  { transform: scale(0.88) rotate(-2deg); }
-  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+@keyframes bc-slot-land {
+  0%   { transform: scale(1.6) rotate(-8deg); opacity: 0; }
+  35%  { transform: scale(0.85) rotate(4deg); opacity: 1; }
+  60%  { transform: scale(1.08) rotate(-2deg); }
+  100% { transform: scale(1)    rotate(0deg); }
 }
 
-.dv-beer-icon.dv-beer-new {
-  animation: dv-beer-pop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+.bc-slot-new {
+  animation: bc-slot-land 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+#bc-status {
+  font-size: 0.85rem;
+  color: var(--text);
+  text-align: center;
+  font-weight: 600;
+  min-height: 1.2em;
+}
+
+/* ── Animation overlay (viewport-wide, pointer-events disabled) ────────── */
+#dv-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+#dv-pour-hand,
+#dv-chug-hand,
+#dv-flying-mug {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+  filter: drop-shadow(0 8px 14px rgba(0,0,0,0.4));
+}
+
+#dv-pour-hand svg,
+#dv-chug-hand svg,
+#dv-flying-mug svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+/* ── Wonky pour: hand swoops in, tilts, pours, leaves ──────────────────── */
+#dv-pour-hand {
+  --ex: 0px;
+  --ey: 0px;
+  --base-tilt: 0deg;
+  --x-jitter: 0px;
+  transform-origin: 50% 100%;       /* pivot at bottle's pour spout */
+  opacity: 0;
+}
+
+@keyframes dv-wonky-pour {
+  0%   {
+    transform: translate(var(--ex), var(--ey))
+               rotate(calc(var(--base-tilt) + 18deg))
+               scale(0.92);
+    opacity: 0;
+  }
+  10%  { opacity: 1; }
+  22%  {
+    transform: translate(calc(var(--x-jitter) + 4px), -10px)
+               rotate(calc(var(--base-tilt) + 8deg))
+               scale(1.04);
+    opacity: 1;
+  }
+  32%  {
+    transform: translate(var(--x-jitter), 0)
+               rotate(var(--base-tilt))
+               scale(1);
+  }
+  42%  {
+    transform: translate(var(--x-jitter), 0)
+               rotate(calc(var(--base-tilt) - 38deg))
+               scale(1);
+  }
+  52%  {
+    transform: translate(var(--x-jitter), 0)
+               rotate(calc(var(--base-tilt) - 52deg))
+               scale(1);
+  }
+  62%  {
+    transform: translate(var(--x-jitter), 0)
+               rotate(calc(var(--base-tilt) - 46deg))
+               scale(1);
+  }
+  72%  {
+    transform: translate(var(--x-jitter), 0)
+               rotate(calc(var(--base-tilt) - 50deg))
+               scale(1);
+  }
+  82%  {
+    transform: translate(var(--x-jitter), -4px)
+               rotate(calc(var(--base-tilt) - 10deg))
+               scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--ex), var(--ey))
+               rotate(calc(var(--base-tilt) + 22deg))
+               scale(0.9);
+    opacity: 0;
+  }
+}
+
+#dv-pour-hand.pouring {
+  animation: dv-wonky-pour 3.8s cubic-bezier(0.34, 1.36, 0.64, 1) forwards;
+}
+
+/* Shot glass wrist-flick — leans toward the entry side once the pour begins.
+   Pivot is the LEFT rim of the glass (matches the element's pour pivot at
+   bbox-x 0%, bbox-y 4.5%) so the pour-stream stays anchored. */
+.dv-shot-glass {
+  transform-box: fill-box;
+  transform-origin: 0% 4.5%;
+  transition: transform 0.7s linear;
+}
+
+/* ── Chug hand: reaches in, holds while mug chugs, exits ──────────────── */
+#dv-chug-hand {
+  --ex: 0px;
+  --mirror: 1;
+  transform-origin: 50% 100%;
+  opacity: 0;
+}
+
+@keyframes dv-chug-hand-in {
+  0%   { transform: translate(var(--ex), 60px) scaleX(var(--mirror)) rotate(0deg);   opacity: 0; }
+  15%  { opacity: 1; }
+  30%  { transform: translate(0, 0)            scaleX(var(--mirror)) rotate(-6deg); opacity: 1; }
+  55%  { transform: translate(0, -6px)         scaleX(var(--mirror)) rotate(-12deg); }
+  78%  { transform: translate(0, 0)            scaleX(var(--mirror)) rotate(-4deg); }
+  92%  { transform: translate(0, 0)            scaleX(var(--mirror)) rotate(0deg);  opacity: 1; }
+  100% { transform: translate(var(--ex), 30px) scaleX(var(--mirror)) rotate(8deg);   opacity: 0; }
+}
+
+#dv-chug-hand.chugging {
+  animation: dv-chug-hand-in 2.7s cubic-bezier(0.36, 0.6, 0.4, 1) forwards;
+}
+
+/* ── Flying empty mug: arc to the shelf ────────────────────────────────── */
+#dv-flying-mug {
+  --fly-dx: 0px;
+  --fly-dy: 0px;
+  --fly-peak: -200px;
+  --fly-end-scale: 0.4;
+  --fly-spin: 720deg;
+  opacity: 0;
+}
+
+@keyframes dv-fly-throw {
+  0%   { transform: translate(0, 0) rotate(0deg) scale(1);          opacity: 1; }
+  50%  { transform: translate(calc(var(--fly-dx) * 0.5), var(--fly-peak))
+                    rotate(calc(var(--fly-spin) * 0.5))
+                    scale(calc((1 + var(--fly-end-scale)) / 2));    opacity: 1; }
+  100% { transform: translate(var(--fly-dx), var(--fly-dy))
+                    rotate(var(--fly-spin))
+                    scale(var(--fly-end-scale));                    opacity: 1; }
+}
+
+#dv-flying-mug.throwing {
+  animation: dv-fly-throw 1.15s cubic-bezier(0.4, -0.1, 0.6, 1.1) forwards;
+}
+
+@keyframes dv-fly-place {
+  0%   { transform: translate(0, 0) rotate(0deg) scale(1);          opacity: 1; }
+  40%  { transform: translate(calc(var(--fly-dx) * 0.4),
+                              calc(var(--fly-peak) * 0.5))
+                    rotate(-8deg)
+                    scale(0.9);                                     opacity: 1; }
+  100% { transform: translate(var(--fly-dx), var(--fly-dy))
+                    rotate(var(--fly-spin))
+                    scale(var(--fly-end-scale));                    opacity: 1; }
+}
+
+#dv-flying-mug.placing {
+  animation: dv-fly-place 1.45s cubic-bezier(0.45, 0.05, 0.4, 1) forwards;
+}
+
+/* ── Liquid droplets streaming into the mug ────────────────────────────── */
+.dv-drop {
+  position: absolute;
+  width: 8px;
+  height: 12px;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  background: linear-gradient(180deg, #ffd860 0%, #e8881a 100%);
+  border: 2px solid #1a1a2e;
+  pointer-events: none;
+  animation: dv-drop-fall 0.4s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+@keyframes dv-drop-fall {
+  0%   { transform: translateY(0)   scale(0.6); opacity: 0; }
+  20%  { transform: translateY(0)   scale(1);   opacity: 1; }
+  100% { transform: translateY(var(--drop-dy)) scale(0.7); opacity: 0; }
+}
+
+/* Spill drops — fly sideways and tumble past the mug */
+.dv-drop-spill {
+  --drop-dx: 0px;
+  animation: dv-drop-spill 0.85s cubic-bezier(0.4, 0.05, 0.7, 0.95) forwards;
+}
+
+@keyframes dv-drop-spill {
+  0%   { transform: translate(0, 0)                                rotate(0deg)   scale(0.5); opacity: 0; }
+  18%  { transform: translate(calc(var(--drop-dx) * 0.25),
+                              calc(var(--drop-dy) * 0.05))         rotate(45deg)  scale(1);   opacity: 1; }
+  70%  { transform: translate(calc(var(--drop-dx) * 0.85),
+                              calc(var(--drop-dy) * 0.55))         rotate(180deg) scale(0.95); opacity: 1; }
+  100% { transform: translate(var(--drop-dx), var(--drop-dy))      rotate(280deg) scale(0.7); opacity: 0; }
+}
+
+/* ── Continuous beer stream from spout to mug ──────────────────────────── */
+.dv-stream {
+  position: absolute;
+  width: 14px;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      180deg,
+      #fff2b0 0px,
+      #ffd860 6px,
+      #f5a623 14px,
+      #e8881a 22px,
+      #ffd860 30px
+    );
+  background-size: 100% 30px;
+  border-left: 2.5px solid #1a1a2e;
+  border-right: 2.5px solid #1a1a2e;
+  border-radius: 8px 8px 4px 4px;
+  transform-origin: top center;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+  animation:
+    dv-stream-flow 0.32s linear infinite,
+    dv-stream-wiggle 0.18s ease-in-out infinite alternate,
+    dv-stream-life 1.3s ease-out forwards;
+}
+
+.dv-stream::before {
+  content: '';
+  position: absolute;
+  left: -2.5px;
+  right: -2.5px;
+  bottom: -7px;
+  height: 14px;
+  background: linear-gradient(180deg, #ffd860 0%, #f5a623 70%, #e8881a 100%);
+  border-radius: 0 0 50% 50% / 0 0 100% 100%;
+  border-left: 2.5px solid #1a1a2e;
+  border-right: 2.5px solid #1a1a2e;
+  border-bottom: 2.5px solid #1a1a2e;
+  animation: dv-stream-tip 0.22s ease-in-out infinite alternate;
+}
+
+@keyframes dv-stream-tip {
+  0%   { transform: scaleY(0.85) translateY(0); }
+  100% { transform: scaleY(1.15) translateY(2px); }
+}
+
+.dv-stream::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 1px;
+  width: 4px;
+  height: 60%;
+  background: rgba(255, 255, 220, 0.55);
+  border-radius: 4px;
+  filter: blur(0.5px);
+}
+
+@keyframes dv-stream-flow {
+  0%   { background-position: 0 0; }
+  100% { background-position: 0 30px; }
+}
+
+@keyframes dv-stream-wiggle {
+  0%   { transform: translateX(-1px) rotate(-1.5deg); }
+  100% { transform: translateX(1px)  rotate(1.5deg); }
+}
+
+@keyframes dv-stream-life {
+  0%   { opacity: 0; height: var(--stream-h, 100px); clip-path: inset(0 0 100% 0); }
+  18%  { opacity: 1; clip-path: inset(0 0 0% 0); }
+  82%  { opacity: 1; clip-path: inset(0 0 0% 0); }
+  100% { opacity: 0; clip-path: inset(100% 0 0 0); }
+}
+
+/* ── Desktop layout: collection becomes a floating sidebar ─────────────── */
+@media (min-width: 1024px) {
+  #beer-collection {
+    position: fixed;
+    top: 80px;
+    left: calc(50% + 240px);
+    width: min(340px, calc((100vw - 460px) / 2));
+    max-height: calc(100vh - 120px);
+    overflow: hidden;
+    padding: 22px;
+    z-index: 5;
+  }
+  #bc-shelf {
+    max-height: calc(100vh - 280px);
+  }
+}
+
+/* On really wide screens, give it a little more breathing room */
+@media (min-width: 1440px) {
+  #beer-collection {
+    left: calc(50% + 260px);
+    width: 360px;
+  }
+}
+
+/* Reduced motion: tone down (still functional) */
+@media (prefers-reduced-motion: reduce) {
+  #dv-pour-hand.pouring,
+  #dv-chug-hand.chugging,
+  #dv-flying-mug.throwing,
+  #dv-flying-mug.placing,
+  #dv-mug-wrap.dv-mug-chug,
+  #dv-mug-wrap.dv-mug-slosh,
+  .bc-slot-new,
+  .dv-drop,
+  .dv-stream {
+    animation-duration: 0.3s !important;
+  }
 }
 
 /* ── Utility ───────────────────────────────────────────────────────────── */

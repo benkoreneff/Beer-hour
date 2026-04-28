@@ -128,15 +128,20 @@
         <div class="dv-section-label">Drinks Tracker</div>
         <div id="dv-stage">
           <div id="dv-mug-wrap"></div>
-          <div id="dv-pour-arm">
-            <div id="dv-bottle-wrap"></div>
-          </div>
         </div>
         <div id="dv-pips"></div>
-        <div id="dv-completed-row">
-          <span class="dv-none-yet">no beers yet...</span>
-        </div>
       </div>
+
+      <aside id="beer-collection" aria-label="Empty glasses collection">
+        <div class="bc-header">
+          <span class="bc-title">The Collection</span>
+          <span class="bc-count" id="bc-count">0</span>
+        </div>
+        <div id="bc-shelf">
+          <span class="bc-empty-placeholder">no empties yet 🥺</span>
+        </div>
+        <div id="bc-status">no beers yet...</div>
+      </aside>
 
       <div id="sound-notice" class="hidden">
         Tap <strong>Start</strong> to enable sound
@@ -156,6 +161,13 @@
         <button id="play-again-btn" class="btn btn-primary">Play Again</button>
       </div>
     </div>
+  </div>
+
+  <!-- Goofy animation overlay (pour hand, chug hand, flying empty) -->
+  <div id="dv-overlay" aria-hidden="true">
+    <div id="dv-pour-hand"></div>
+    <div id="dv-chug-hand"></div>
+    <div id="dv-flying-mug"></div>
   </div>
 
   <!-- Drink sounds — both play in parallel when DRINK alert fires -->
