@@ -152,6 +152,20 @@
         <button id="reset-btn" class="btn btn-ghost hidden">Reset</button>
       </div>
 
+      <div id="drink-viz">
+        <div class="dv-section-label">Drinks Tracker</div>
+        <div id="dv-stage">
+          <div id="dv-mug-wrap"></div>
+          <div id="dv-pour-arm">
+            <div id="dv-bottle-wrap"></div>
+          </div>
+        </div>
+        <div id="dv-pips"></div>
+        <div id="dv-completed-row">
+          <span class="dv-none-yet">no beers yet...</span>
+        </div>
+      </div>
+
       <div id="now-playing" class="hidden">
         <div class="np-label">Now Playing</div>
         <div id="now-playing-name"   class="np-name"></div>
@@ -183,6 +197,7 @@
   <audio id="drink-sound-2" preload="none"></audio>
 
   <script src="spotify.js"></script>
+  <script src="drinkViz.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

@@ -894,6 +894,158 @@ main {
   margin-top: 2px;
 }
 
+/* ── Drink Visualiser ──────────────────────────────────────────────────── */
+#drink-viz {
+  width: 100%;
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 16px 16px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.dv-section-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  align-self: flex-start;
+}
+
+/* stage: clips the bottle arm when it's off-screen */
+#dv-stage {
+  position: relative;
+  width: 160px;
+  height: 150px;
+  overflow: hidden;
+}
+
+#dv-mug-wrap {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 110px;
+}
+
+#dv-mug-wrap svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+@keyframes dv-chug {
+  0%   { transform: translateX(-50%) rotate(0deg)   scale(1); }
+  15%  { transform: translateX(-50%) rotate(-9deg)  scale(1.07); }
+  30%  { transform: translateX(-50%) rotate(7deg)   scale(0.96); }
+  48%  { transform: translateX(-50%) rotate(-5deg)  scale(1.03); }
+  65%  { transform: translateX(-50%) rotate(3deg); }
+  82%  { transform: translateX(-50%) rotate(-1deg); }
+  100% { transform: translateX(-50%) rotate(0deg)   scale(1); }
+}
+
+#dv-mug-wrap.dv-mug-chug {
+  animation: dv-chug 0.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+}
+
+/* pour arm: slides in from the right, already tilted */
+#dv-pour-arm {
+  position: absolute;
+  top: 4px;
+  right: 0;
+  width: 52px;
+  transform-origin: center bottom;
+  transform: translateX(72px) rotate(-45deg);
+}
+
+#dv-pour-arm svg,
+#dv-bottle-wrap svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+@keyframes dv-pour-anim {
+  0%   { transform: translateX(72px)  rotate(-45deg); }
+  18%  { transform: translateX(0px)   rotate(-45deg); }
+  28%  { transform: translateX(0px)   rotate(-53deg); }
+  35%  { transform: translateX(0px)   rotate(-43deg); }
+  42%  { transform: translateX(0px)   rotate(-50deg); }
+  72%  { transform: translateX(0px)   rotate(-50deg); }
+  86%  { transform: translateX(0px)   rotate(-45deg); }
+  100% { transform: translateX(72px)  rotate(-45deg); }
+}
+
+#dv-pour-arm.pouring {
+  animation: dv-pour-anim 1.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+/* shot pips */
+#dv-pips {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  justify-content: center;
+}
+
+.dv-pip {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--ring-bg);
+  border: 2px solid #3a4a6a;
+  transition: background 0.18s, border-color 0.18s, transform 0.15s;
+}
+
+.dv-pip.filled {
+  background: var(--accent);
+  border-color: var(--accent);
+  transform: scale(1.25);
+}
+
+/* completed beers row */
+#dv-completed-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  min-height: 38px;
+  align-items: center;
+  width: 100%;
+}
+
+.dv-none-yet {
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.dv-beer-icon {
+  display: inline-flex;
+  width: 30px;
+  height: auto;
+  flex-shrink: 0;
+}
+
+.dv-beer-icon svg {
+  width: 100%;
+  height: auto;
+}
+
+@keyframes dv-beer-pop {
+  0%   { transform: scale(0) rotate(-20deg); opacity: 0; }
+  60%  { transform: scale(1.35) rotate(6deg); opacity: 1; }
+  80%  { transform: scale(0.88) rotate(-2deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.dv-beer-icon.dv-beer-new {
+  animation: dv-beer-pop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
 /* ── Utility ───────────────────────────────────────────────────────────── */
 .hidden {
   display: none !important;

@@ -23,6 +23,12 @@ let audioCtx      = null;
 let audioUnlocked = false;
 let wakeLock      = null;
 
+// Shared state accessors for sub-modules (drinkViz.js)
+window.BeerHour = {
+  getAudioCtx: () => audioCtx,
+  getConfig:   () => config,
+};
+
 // ── DOM refs ───────────────────────────────────────────────────────────────
 // Setup screen
 const setupScreen     = document.getElementById('setup-screen');
@@ -177,6 +183,8 @@ function launchGame() {
 
   setupScreen.classList.add('hidden');
   appDiv.classList.remove('hidden');
+
+  if (typeof drinkViz !== 'undefined') drinkViz.init();
 }
 
 function renderPlayerBoard() {
@@ -422,6 +430,7 @@ function tick() {
 function onRoundEnd() {
   playDrinkHorn();
   showDrinkAlert();
+  if (typeof drinkViz !== 'undefined') drinkViz.onShot();
 
   if (!config.endless && currentRound >= config.rounds) {
     endGame();
@@ -490,6 +499,7 @@ function fullReset() {
   drinkAlert.classList.add('hidden');
   timerRing.classList.remove('urgent');
   playerBoard.classList.add('hidden');
+  if (typeof drinkViz !== 'undefined') drinkViz.reset();
 
   startBtn.classList.remove('hidden');
   pauseBtn.classList.add('hidden');
