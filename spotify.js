@@ -121,6 +121,7 @@ async function spFetch(path, opts = {}) {
   if (res.status === 204) return null;
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
+    console.error('Spotify API error', res.status, url, JSON.stringify(err));
     const msg = err?.error?.message || res.statusText || 'unknown';
     throw new Error(`Spotify ${res.status}: ${msg} [${url.replace('https://api.spotify.com/v1', '')}]`);
   }
@@ -254,6 +255,9 @@ function spHideNowPlaying() {
 
 // ── Setup screen UI ────────────────────────────────────────────────────────
 async function spInitUI() {
+  const _dbgTokens = spGetTokens();
+  if (_dbgTokens) console.log('[Spotify] granted scope:', _dbgTokens.scope);
+
   // Handle OAuth callback
   const p    = new URLSearchParams(window.location.search);
   const code = p.get('code');
