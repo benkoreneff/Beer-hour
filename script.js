@@ -7,6 +7,7 @@ const config = {
   duration: 60,  // seconds per round
   sfx:      true,
   ticks:    true,
+  gif:      true,
 };
 
 // ── Players ────────────────────────────────────────────────────────────────
@@ -44,6 +45,7 @@ const roundsSlider    = document.getElementById('rounds-slider');
 const roundsValueBadge= document.getElementById('rounds-value');
 const sfxToggle       = document.getElementById('sfx-toggle');
 const ticksToggle     = document.getElementById('ticks-toggle');
+const gifToggle       = document.getElementById('gif-toggle');
 const launchBtn       = document.getElementById('launch-btn');
 const playerNameInput = document.getElementById('player-name-input');
 const addPlayerBtn    = document.getElementById('add-player-btn');
@@ -165,6 +167,7 @@ playerNameInput.addEventListener('keydown', e => {
 launchBtn.addEventListener('click', () => {
   config.sfx   = sfxToggle.checked;
   config.ticks = ticksToggle.checked;
+  config.gif   = gifToggle.checked;
   launchGame();
 });
 
@@ -388,6 +391,7 @@ function updateRoundDisplay() {
 
 function showDrinkAlert() {
   drinkAlert.classList.remove('hidden');
+  drinkGif.style.display = config.gif ? 'block' : 'none';
   timerRing.classList.remove('urgent');
 
   playDrinkSound();
