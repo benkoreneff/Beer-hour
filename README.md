@@ -1,4 +1,4 @@
-# 🍺 Beer Hour
+# 🍺 Power Hour
 
 A simple, mobile-first drinking game timer that runs entirely in your browser — no app store, no Xcode, no backend.
 
@@ -56,7 +56,7 @@ npx serve .
 
 1. Open the GitHub Pages URL in **Safari**.
 2. Tap the **Share** button (box with arrow) → **Add to Home Screen**.
-3. Give it a name (e.g. "Beer Hour") and tap **Add**.
+3. Give it a name (e.g. "Power Hour") and tap **Add**.
 4. Open it from your Home Screen — it runs full-screen like a native app.
 5. Tap **Start** and enjoy.
 

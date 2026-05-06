@@ -1,6 +1,6 @@
 # Assets
 
-Drop your custom media files here — Beer Hour will pick them up automatically.
+Drop your custom media files here — Power Hour will pick them up automatically.
 
 ## drink.gif
 

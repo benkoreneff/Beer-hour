@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 /* ── Reset & base ──────────────────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -6,18 +8,19 @@
 }
 
 :root {
-  --bg:        #1a1a2e;
-  --surface:   #16213e;
-  --surface2:  #0f172a;
-  --accent:    #f5a623;
-  --accent2:   #e8891a;
-  --text:      #f0f0f0;
-  --muted:     #8888aa;
-  --danger:    #ff4757;
-  --ring-bg:   #2a2a4a;
-  --ring-fg:   #f5a623;
-  --radius:    16px;
-  --radius-sm: 10px;
+  --bg:         #1a1a2e;
+  --surface:    #16213e;
+  --surface2:   #0f172a;
+  --accent:     #ff6b00;
+  --accent2:    #cc5200;
+  --accent-blue:#00d4ff;
+  --text:       #f0f0f0;
+  --muted:      #8888aa;
+  --danger:     #ff4757;
+  --ring-bg:    #2a2a4a;
+  --ring-fg:    #ff6b00;
+  --radius:     16px;
+  --radius-sm:  10px;
 }
 
 html, body {
@@ -58,27 +61,70 @@ body {
   padding-top: 36px;
 }
 
-.setup-logo {
-  font-size: 4rem;
-  animation: bob 2s ease-in-out infinite alternate;
+/* ── Setup hero: mascot + brand side-by-side ───────────────────────────── */
+.setup-hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  padding: 4px 0 8px;
 }
 
-@keyframes bob {
-  from { transform: translateY(0) rotate(-4deg); }
-  to   { transform: translateY(-8px) rotate(4deg); }
+.setup-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
 }
 
 .setup-title {
-  font-size: 2rem;
-  font-weight: 900;
+  font-family: 'Press Start 2P', monospace;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  line-height: 1.25;
+}
+
+.title-power {
+  font-size: 1.55rem;
   color: var(--accent);
-  letter-spacing: 0.02em;
+  text-shadow:
+    4px 4px 0 #6b2400,
+    0 0 22px rgba(255, 107, 0, 0.45);
+  letter-spacing: 0.04em;
+}
+
+.title-hour {
+  font-size: 1.55rem;
+  color: var(--accent-blue);
+  text-shadow:
+    4px 4px 0 #005566,
+    0 0 22px rgba(0, 212, 255, 0.4);
+  letter-spacing: 0.04em;
 }
 
 .setup-subtitle {
-  font-size: 0.95rem;
+  font-size: 0.65rem;
   color: var(--muted);
-  margin-top: -16px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+@keyframes bob {
+  from { transform: translateY(0) scaleX(1); }
+  to   { transform: translateY(-8px) scaleX(1.03); }
+}
+
+.mascot-img {
+  width: 100px;
+  height: auto;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 6px 18px rgba(255, 107, 0, 0.35));
+  animation: bob 1.8s ease-in-out infinite alternate;
+  flex-shrink: 0;
 }
 
 .setup-section {
@@ -130,7 +176,7 @@ body {
 .preset-btn.active {
   border-color: var(--accent);
   color: var(--accent);
-  background: rgba(245, 166, 35, 0.1);
+  background: rgba(255, 107, 0, 0.1);
 }
 
 .preset-btn-endless {
@@ -489,10 +535,11 @@ header {
 header h1 {
   flex: 1;
   text-align: center;
-  font-size: 1.5rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
   color: var(--accent);
+  text-shadow: 0 0 14px rgba(255, 107, 0, 0.5);
 }
 
 .icon-btn {
@@ -703,9 +750,10 @@ main {
   background: var(--accent);
   color: #1a1a2e;
   min-width: 140px;
+  box-shadow: 0 0 18px rgba(255, 107, 0, 0.45), 0 2px 8px rgba(0,0,0,0.4);
 }
 
-.btn-primary:hover  { background: var(--accent2); }
+.btn-primary:hover  { background: var(--accent2); box-shadow: 0 0 24px rgba(255, 107, 0, 0.6), 0 2px 8px rgba(0,0,0,0.4); }
 
 .btn-secondary {
   background: var(--surface);
@@ -857,7 +905,7 @@ main {
   background: var(--accent);
   border-color: var(--accent);
   transform: scale(1.25);
-  box-shadow: 0 0 8px rgba(245, 166, 35, 0.6);
+  box-shadow: 0 0 8px rgba(255, 107, 0, 0.6);
 }
 
 /* ── Beer Collection (the empties shelf) ───────────────────────────────── */

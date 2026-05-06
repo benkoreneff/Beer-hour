@@ -22,9 +22,9 @@ Five files make up the entire app. Script load order in `index.html` is signific
 3. `script.js` — loaded last, orchestrates everything
 
 ### `script.js`
-Main game controller. Owns the timer loop (drift-corrected via `performance.now()`), Web Audio API synthesis, Wake Lock, setup screen, player tab, and game-over panel. Exposes a `window.BeerHour` bridge so sub-modules can access shared state without circular deps:
-- `window.BeerHour.getAudioCtx()` — the shared AudioContext
-- `window.BeerHour.getConfig()` — game config object (includes `sfx` flag)
+Main game controller. Owns the timer loop (drift-corrected via `performance.now()`), Web Audio API synthesis, Wake Lock, setup screen, player tab, and game-over panel. Exposes a `window.PowerHour` bridge so sub-modules can access shared state without circular deps:
+- `window.PowerHour.getAudioCtx()` — the shared AudioContext
+- `window.PowerHour.getConfig()` — game config object (includes `sfx` flag)
 
 Key integration points where sub-modules are called:
 - `launchGame()` → `drinkViz.init()`, `spotify.reset()`
@@ -34,7 +34,7 @@ Key integration points where sub-modules are called:
 - `fullReset()` → `drinkViz.reset()`, `spotify.stopPlayback()`
 
 ### `drinkViz.js`
-IIFE module. Tracks shots (1 per round) and beers (1 per 8 shots). Renders an animated SVG mug that fills up, a pour-arm animation, shot pips, and a completed-beer icon row. All SVG is generated as inline strings — no external assets. Sound is synthesised via the shared AudioContext from `window.BeerHour.getAudioCtx()`.
+IIFE module. Tracks shots (1 per round) and beers (1 per 8 shots). Renders an animated SVG mug that fills up, a pour-arm animation, shot pips, and a completed-beer icon row. All SVG is generated as inline strings — no external assets. Sound is synthesised via the shared AudioContext from `window.PowerHour.getAudioCtx()`.
 
 Public API: `drinkViz.init()`, `drinkViz.onShot()`, `drinkViz.reset()`
 

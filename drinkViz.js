@@ -575,8 +575,8 @@ const drinkViz = (() => {
 
   // ── Sounds ───────────────────────────────────────────────────────────────
 
-  function getCtx() { return window.BeerHour ? window.BeerHour.getAudioCtx() : null; }
-  function sfxOn()  { return window.BeerHour ? window.BeerHour.getConfig().sfx : false; }
+  function getCtx() { return window.PowerHour ? window.PowerHour.getAudioCtx() : null; }
+  function sfxOn()  { return window.PowerHour ? window.PowerHour.getConfig().sfx : false; }
 
   function playPourSound() {
     const ctx = getCtx();

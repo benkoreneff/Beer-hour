@@ -32,7 +32,7 @@ const BEER_COMPLETE_MS = 4200;   // chug + fly-to-shelf when 8th shot lands (aft
 const SHOTS_PER_BEER   = 8;
 
 // Shared state accessors for sub-modules (drinkViz.js)
-window.BeerHour = {
+window.PowerHour = {
   getAudioCtx: () => audioCtx,
   getConfig:   () => config,
 };

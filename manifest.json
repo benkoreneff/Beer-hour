@@ -1,6 +1,6 @@
 {
-  "name": "Beer Hour",
-  "short_name": "Beer Hour",
+  "name": "Power Hour",
+  "short_name": "Power Hour",
   "description": "60-round drinking game timer",
   "start_url": "./index.html",
   "display": "standalone",

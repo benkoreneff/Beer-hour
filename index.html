@@ -5,9 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Beer Hour" />
+  <meta name="apple-mobile-web-app-title" content="Power Hour" />
   <meta name="theme-color" content="#1a1a2e" />
-  <title>Beer Hour</title>
+  <title>Power Hour</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="style.css" />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
@@ -17,9 +19,16 @@
   <!-- ── Setup Screen ──────────────────────────────────────────────────── -->
   <div id="setup-screen">
     <div id="setup-content">
-      <div class="setup-logo">🍺</div>
-      <h1 class="setup-title">Beer Hour</h1>
-      <p class="setup-subtitle">Build your session</p>
+      <div class="setup-hero">
+        <div class="setup-brand">
+          <h1 class="setup-title">
+            <span class="title-power">POWER</span>
+            <span class="title-hour">HOUR</span>
+          </h1>
+          <p class="setup-subtitle">Build your session</p>
+        </div>
+        <img src="icons/Retro 8-bit guy.svg" class="mascot-img" alt="" aria-hidden="true" />
+      </div>
 
       <div class="setup-section">
         <div class="setup-label">Number of Rounds</div>
@@ -84,7 +93,7 @@
         <ul id="player-setup-list" class="player-setup-list"></ul>
       </div>
 
-      <button id="launch-btn" class="btn btn-primary btn-launch">Let's Drink! 🍺</button>
+      <button id="launch-btn" class="btn btn-primary btn-launch">Power Up! ⚡</button>
     </div>
   </div>
 
@@ -92,7 +101,7 @@
   <div id="app" class="hidden">
     <header>
       <button id="back-btn" class="icon-btn" aria-label="Back to setup" title="Back to setup">←</button>
-      <h1>🍺 Beer Hour</h1>
+      <h1>POWER HOUR</h1>
       <div class="icon-btn-placeholder"></div>
     </header>
 
